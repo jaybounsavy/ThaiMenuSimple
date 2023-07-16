@@ -1,0 +1,249 @@
+<html>
+	<head>
+	</head>
+
+    <body>
+        <td>Simple Food Menu</td>
+    </body>
+
+    <script>
+
+        //-------------------------------------------------------------------------
+        // Class:  Food
+        //-------------------------------------------------------------------------
+        class Food {
+            
+            constructor(name) {
+                this.name = name;
+            }
+
+            // Show general information about a food item
+            describe() {
+                return `${this.name}`;
+            }
+        }
+
+
+        //-------------------------------------------------------------------------
+        // Class:  Order
+        //-------------------------------------------------------------------------
+
+        class Order {
+
+            constructor(name) {
+                this.name = name;
+                this.foods = [];
+            }
+
+            // Add a food item to this order
+            addFood(food) {
+                if (food instanceof Food) {
+                    this.foods.push(food);
+                } else {
+                    throw new Error(`You can only add an instance of Food. 
+            argument is not a food item: ${food}`);
+                }
+            }
+
+            // Show general information about order
+            describe() {
+                return `${this.name} has ${this.foods.length} food item(s).`;
+            }
+        }
+
+
+        //-------------------------------------------------------------------------
+        // Class:  Menu
+        //-------------------------------------------------------------------------
+        class Menu { // what drives the application and our choices
+            constructor() {
+                this.orders = []; //Hold array of orders
+
+                this.selectedOrder = null; //Hold selected or current order
+            }
+
+            start() { // entry point to application
+                let selection = this.showMainMenuOptions();
+
+                while (selection != 0) {
+                    switch (selection) {
+                        case '1':
+                            this.createOrder();
+                            break;
+                        case '2':
+                            this.viewOrder();
+                            break;
+                        case '3':
+                            this.deleteOrder();
+                            break;
+                        default:
+                            selection = 0;
+                    }
+                    selection = this.showMainMenuOptions();
+                }
+
+                // Display a message to the user when the user exits the application 
+                alert('Thank you.  Please come visit us again.');
+            }
+
+
+            //-------------------------------------------------------------------------
+            //      Method:  showMainMenuOptions()
+            // Description:  Show the main menu
+            //-------------------------------------------------------------------------
+            showMainMenuOptions() {
+                return prompt(`
+            
+            Please select your option below.
+                
+            1) Create a New Order
+            2) View Order
+            3) Delete Order
+            0) Exit
+
+            `);
+            }
+
+
+            //-------------------------------------------------------------------------
+            //      Method:  showFoodItemMenuOptions()
+            // Description:  Show submenu for action on the food item
+            //-------------------------------------------------------------------------
+            showFoodItemMenuOptions(orderInfo) {
+                return prompt(`
+            0) Back
+            1) Add a Food Item
+            2) Delete a Food Item
+            -----------------
+            ${orderInfo}
+            `);
+            }
+
+
+
+            //----------------------------------------------------------------------   
+            //      Method:  createOrder()
+            // Description:  Create a new order
+            //----------------------------------------------------------------------  
+            createOrder() {
+
+                // Ask the user for the name for the order
+                let name = prompt('Enter the name for the order.');
+
+                // Put the new Order into the array of orders.
+                this.orders.push(new Order(name));
+
+                // Assign the newly created order to the current order
+                this.selectedOrder = this.orders[length-1];
+
+            }
+
+            //----------------------------------------------------------------------   
+            // View Order
+            //----------------------------------------------------------------------    
+            viewOrder() {
+
+                // Ask the user for the index to the order to view.
+                let index = prompt("Enter the index of the order that you want to view:");
+                
+                // Check if the index inputted by user is valid
+                if (index > -1 && index < this.orders.length) {
+
+                    // Set the current\selected order to the index provided by the user
+                    this.selectedOrder = this.orders[index];
+
+                    // Create a string about the order
+                    // Show information about the order 
+                    let description = 'Order: ' + this.selectedOrder.name + '\n';
+                    description += ' ' + this.selectedOrder.describe() + '\n ';
+
+
+                    // Show information about the food item
+                    for (let i = 0; i < this.selectedOrder.foods.length; i++) {
+                        description += i + ') ' + this.selectedOrder.foods[i].describe() + '\n';
+                    }
+
+
+                    // Show a submenu for what action to take on a food item
+                    let selection1 = this.showFoodItemMenuOptions(description);
+
+                    // Based on selected menu item, take the appropriate action
+                    switch (selection1) {
+                        case '1':
+                            this.addFood();
+                            break;
+                        case '2':
+                            this.deleteFood();
+                            break;
+                    }
+
+                } else {
+
+                    // User inputted a wrong index.  Show the user that the index is incorrect. 
+                    alert ("Please select a valid index for order.");
+                }
+
+            }// end viewOrder            
+
+
+
+            //----------------------------------------------------------------------   
+            //      Method: addFood()
+            // Description: Add a food item to an order. 
+            //----------------------------------------------------------------------               
+            addFood() {
+
+                // Ask the user for a name of the food item
+                let name = prompt('Enter a name of a food item.');
+
+                // Insert the new food item into an array of foods.
+                this.selectedOrder.addFood(new Food(name) );
+
+            }
+
+
+            //----------------------------------------------------------------------   
+            //      Method: deleteFood()
+            // Description: Delete a food item from an order. 
+            //----------------------------------------------------------------------     
+            deleteFood() {
+
+                // Ask the user for the index of the food item to delete
+                let index = prompt('Enter the index of the food that you want to delete: ');
+
+
+                // Delete the food item from the array of food items.
+                if (index > -1 && index < this.selectedOrder.foods.length) {
+                    this.selectedOrder.foods.splice(index, 1);
+                }
+
+            }
+
+            //----------------------------------------------------------------------   
+            //      Method: deleteOrder()
+            // Description: Delete an order
+            //----------------------------------------------------------------------             
+            deleteOrder() {
+
+                // Ask the user for the index of the Order to delete
+                let index = prompt('Enter the index of the order that you want to remove: ');
+
+                // Delete the order from the array of orders
+                if (index > -1 && index < this.orders.length) {
+                    this.orders.splice(index, 1);
+                }
+            }
+
+        } // end Menu Class
+
+
+
+        let menu = new Menu();
+        menu.start();
+
+
+    </script>
+
+
+
+</html>
